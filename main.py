@@ -30,15 +30,13 @@ def about_me():
         input("\nPress Enter to return to the menu...")
         clear_screen() # Clear the screen after displaying.
 
-
 def clear_screen(): #This Function Clear the screen.
     os.system("cls" if os.name == "nt" else "clear") # I have no idea what it does. 
-
 
 # @ : This function takes the response from the API and displays it in a nice format.
 def output(): 
     while True: 
-        response = get_pokemon()
+        response = get_pokemon_by_name()
         if response == "Exit": 
             clear_screen() 
             break
@@ -47,26 +45,9 @@ def output():
         elif response == "Number":
             print("Invalid Input.")
         else: # show the ouput in a nice format.
-            id = response["id"]
-            name = response["name"]
-            height = response["height"]
-            type_name = response["types"][0]["type"]["name"]
-            weight = response["weight"]
-            #history = search_histoy()
-            clear_screen()
-            cli_art()
-            print("                                        ")
-            print("========================================")
-            print(f"| ID: {id}                             ")
-            print(f"| Name: {name}                         ")    
-            print(f"| Type: {type_name}                    ")
-            print(f"| Height: {height}                     ")
-            print(f"| Weight: {weight}                     ")
-            print("========================================")
-            print("                                        ")
-            #print(history)
+            display_pokemon(response)
 
-def get_pokemon():
+def get_pokemon_by_name():
     while True: #Runs a infinite loop until the user enters "1" to exit.
         pokemon = input("Enter the Name of the Pokemon: ").strip().title()  # Takes input and stores it in pokemon.
         if pokemon == "1":
@@ -86,32 +67,66 @@ def get_pokemon():
                     return pokemon_data #Sends the json data to bridge fucntion to display the data in a nice format.
 
 
-def random_pokemon():
+def random_pokemon_by_id():
     pokemon_id = random.randint(1, 1025)
     pokemon_id =str(pokemon_id)
     request_url = "https://pokeapi.co/api/v2/pokemon/" + pokemon_id
     response = requests.get(request_url)
+    pokemon_data = response.json()
     if response.status_code == 200:
-        pokemon_data = response.json()
-        index_id = pokemon_data["id"]
-        name = pokemon_data["name"]
-        height = pokemon_data["height"]
-        type_name = pokemon_data["types"][0]["type"]["name"]
-        weight = pokemon_data["weight"]
+        display_pokemon(pokemon_data)
+        input("\nPress Enter to return to the menu...")
         clear_screen()
-        cli_art()
-        print("                                        ")
-        print("========================================")
-        print(f"| ID: {index_id}                       ")
-        print(f"| Name: {name}                         ")    
-        print(f"| Type: {type_name}                    ")
-        print(f"| Height: {height}                     ")
-        print(f"| Weight: {weight}                     ")
-        print("========================================")
-        print("                                        ")
     elif response.status_code == 404:
         return "Connection Time-Out."
 
+# TODO : 
+def display_pokemon(response):
+    pokemon_id = response["id"]
+    name = response["name"]
+    height = response["height"]
+    types = response["types"]
+    abilities = response["abilities"]
+    weight = response["weight"]
+            
+    hp = response["stats"][0]["base_stat"]
+    attack = response["stats"][1]["base_stat"]
+    defense = response["stats"][2]["base_stat"]
+    special_attack = response["stats"][3]["base_stat"]
+    special_defense = response["stats"][4]["base_stat"]
+            
+    pokemon_type = []
+    for t in types:
+        pokemon_type.append(t["type"]["name"])
+        all_types = " / ".join(pokemon_type)
+            
+    pokemon_abilities = []
+    for a in abilities:
+        pokemon_abilities.append(a["ability"]["name"])
+        all_abilities = " / ".join(pokemon_abilities)
+
+    #history = search_histoy()
+    clear_screen()
+    cli_art()
+    print("                                                                              ")
+    print("= General Info ===============================================================")
+    print("                                                                              ")
+    print(f"| ID: {pokemon_id}                                       ") 
+    print(f"| Name: {name}                                   ")    
+    print(f"| Type: {all_types}                              ")
+    print(f"| Abilities: {all_abilities}                     ")
+    print(f"| Height: {height}                               ")
+    print(f"| Weight: {weight}                               ")
+    print("                                                                              ")
+    print("= Stats ======================================================================")
+    print("                                                                              ")
+    print(f"| HP : {hp}                                     ")                                       
+    print(f"| Attack : {attack}                             ")           
+    print(f"| Defense : {defense}                           ")
+    print(f"| Special Attack : {special_attack}             ")
+    print(f"| Special Defense : {special_defense}           ")
+    print("                                                                              ")
+    #print(history)
 
 def search_menu():
     while True: #Runs a infinite loop until the user enters "3" to exit.
@@ -120,13 +135,13 @@ def search_menu():
         print("1. Search   ") 
         print("2. Random Pokemon ")
         print("3. About Me ") 
-        print("3. Exit     ")
+        print("4. Exit     ")
         print("=======================")
         user_choice = input("Enter your Choice: ") #Takes Input and stores it in user_choice.
         if user_choice == "1":  # Currently, 1 is string not a int and so the other.
             output()
         elif user_choice == "2":
-            random_pokemon()
+            random_pokemon_by_id()
         elif user_choice == "3":
             about_me() 
         elif user_choice == "4":
@@ -141,7 +156,7 @@ def search_histoy():
     store = 5 
     for _ in store:
         history = []
-        _ , name = get_pokemon()
+        _ , name = get_pokemon_by_name()
         if name == "Exit" or name == "Number" or name == "404":
             continue
         else:
