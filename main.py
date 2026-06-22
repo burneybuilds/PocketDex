@@ -94,7 +94,7 @@ def random_pokemon_by_id():
         #     input("\nPress Enter to return to the menu...")
         #     clear_screen()
         # elif response.status_code == 404:
-        #     return "Connection Time-Out."
+        #     return "Connection Time-Out.""
 
 
 def display_pokemon(response, history):
