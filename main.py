@@ -36,17 +36,24 @@ def clear_screen(): #This Function Clear the screen.
 # @ : This function takes the response from the API and displays it in a nice format.
 def handle_search(): 
     while True: 
-        response, Name = get_pokemon_by_name()
+        response, extra_data = get_pokemon_by_name()
         if response == "Exit": 
             clear_screen() 
             break
         elif response == "404": 
-            print("Could not connect to PokeAPI.") 
+            print("Could not connect to PokeAPI.")
+            input("\nPress Enter to return to the menu...") 
+            clear_screen()
+            break
+        elif response == "Not Found":
+            print("No Pokemon With such Name Found.")
+            input("\nPress Enter to return to the menu...")
+            clear_screen()
             break
         # elif response == "Number":
         #     print("Invalid Input.")
         else: # show the ouput in a nice format.
-            display_pokemon(response, Name)
+            display_pokemon(response, extra_data)
 
 def get_pokemon_by_name():
     # history = [] 
@@ -61,13 +68,18 @@ def get_pokemon_by_name():
             pokemon_name = pokemon 
             try:
                 request_url = "https://pokeapi.co/api/v2/pokemon/" + pokemon_name
-                response = requests.get(request_url) # just for debugging
+                request_url1 = "https://pokeapi.co/api/v2/pokemon-species/" + pokemon_name
+                response = requests.get(request_url) # 
+                response_extra = requests.get(request_url1)
                 pokemon_data = response.json()
+                extra_data = response_extra.json()
                 # history.append(pokemon)
                 # s_history = " ".join(history)
-                return pokemon_data, pokemon
+                return pokemon_data, extra_data
             except requests.RequestException:
-                return "404"
+                return "404", None
+            except requests.exceptions.HTTPError:
+                return "Not Found", None
             # if response.status_code ==  404:
             #     return "Data Not Found"
             # else:
@@ -79,10 +91,13 @@ def random_pokemon_by_id():
     pokemon_id = random.randint(1, 1025)
     pokemon_id = str(pokemon_id)
     request_url = "https://pokeapi.co/api/v2/pokemon/" + pokemon_id
+    request_url1 = "https://pokeapi.co/api/v2/pokemon-species/" + pokemon_id
     try:
         response = requests.get(request_url)
+        extra_data = requests.get(request_url1)
         pokemon_data = response.json()
-        display_pokemon(pokemon_data)
+        pokemon_extra = extra_data.json()
+        display_pokemon(pokemon_data, pokemon_extra)
         input("\nPress Enter to return to the menu...")
         clear_screen()
     except requests.RequestException:
@@ -97,7 +112,7 @@ def random_pokemon_by_id():
         #     return "Connection Time-Out.""
 
 
-def display_pokemon(response, history):
+def display_pokemon(response, extra_data):
     pokemon_id = response["id"]
     name = response["name"]
     height = response["height"]
@@ -121,10 +136,29 @@ def display_pokemon(response, history):
         pokemon_abilities.append(a["ability"]["name"])
         all_abilities = " / ".join(pokemon_abilities)
     
-    p_name = history
-    s_historu = []
-    s_historu.append(p_name)
-    search = " / ".join(s_historu).title
+    discription = extra_data["flavor_text_entries"]
+    for d in discription:
+        if d["language"]["name"] == "en":
+            pokemo_info = d["flavor_text"]
+
+    pokemo_info = pokemo_info.replace("\n", " ")
+    pokemo_info = pokemo_info.replace("\f", " ")
+
+    is_legendary_status = extra_data["is_legendary"]
+    is_mythical_status = extra_data["is_mythical"]
+
+    status = ""
+    if is_legendary_status == True:
+        status = "Legendary Pokemon"
+    elif is_mythical_status == True:
+        status = "Mytical Pokemon"
+    else:
+        status = "Normal Pokemon"
+
+    # # p_name = history
+    # s_historu = []
+    # s_historu.append(p_name)
+    # search = " / ".join(s_historu).title
     #history = search_histoy()
     clear_screen()
     cli_art()
@@ -137,6 +171,8 @@ def display_pokemon(response, history):
     print(f"| Abilities: {all_abilities}                     ")
     print(f"| Height: {height}                               ")
     print(f"| Weight: {weight}                               ")
+    print("|                                                                            ")
+    print(f"| Status : {status}                                                         ")
     print("                                                                              ")
     print("= Stats ======================================================================")
     print("                                                                              ")
@@ -146,7 +182,10 @@ def display_pokemon(response, history):
     print(f"| Special Attack : {special_attack}             ")
     print(f"| Special Defense : {special_defense}           ")
     print("                                                                              ")
-    print(search)
+    print(f"= Discription: {pokemo_info}")
+    print()
+
+    # print(search)
 
 def search_menu():
     while True: #Runs a infinite loop until the user enters "3" to exit.
@@ -155,7 +194,7 @@ def search_menu():
         print("1. Search Pokemon (Name / ID)  ") 
         print("2. Random Pokemon ")
         print("3. About Me ") 
-        print("4. Recent Searches")
+        print("4. Recent Searches ( Not Working )")
         print("5. Exit     ")
         print("=======================")
         user_choice = input("Enter your Choice: ") #Takes Input and stores it in user_choice.
@@ -165,8 +204,8 @@ def search_menu():
             random_pokemon_by_id()
         elif user_choice == "3":
             about_me() 
-        elif user_choice == "4":
-            search_histoy()    
+        # elif user_choice == "4":
+        #     # search_histoy()    
         elif user_choice == "5":
             clear_screen()
             break
@@ -175,10 +214,10 @@ def search_menu():
 
 # TODO: Need to make this recent history feature. 
 # ! Not Completed
-def search_histoy():
-    # n , history = get_pokemon_by_name()
-    for h in history:
-        print(h)
+# def search_histoy():
+    # # n , history = get_pokemon_by_name()
+    # for h in history:
+    #     print(h)
     # store = 5 
     # for _ in store:
     #     history = []

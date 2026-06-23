@@ -1,3 +1,7 @@
+<p align="center">
+    <img src="images/pocket-desk.png" width="800">
+</p>
+
 # Pocket-Desk
 
 ![Python](https://img.shields.io/badge/Python-3.14-blue)
