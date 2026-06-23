@@ -19,13 +19,13 @@ The project was created both as a learning experience and as a fun way to explor
 ## Installation
 
 ```bash
-pip install pocket-desk
+Soon
 ```
 
 Run the application:
 
 ```bash
-pocket-desk
+Soon
 ```
 
 ## Features
