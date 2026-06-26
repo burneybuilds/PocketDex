@@ -1,1 +1,2 @@
 requests 
+kinter  - For Desktop Vrs Only

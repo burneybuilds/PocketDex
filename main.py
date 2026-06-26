@@ -47,7 +47,14 @@ def handle_search():
             clear_screen()
             break
         elif response == "Not Found":
+            print()
             print("No Pokemon With such Name Found.")
+            input("\nPress Enter to return to the menu...")
+            clear_screen()
+            break
+        elif response == "Invalid input":
+            print()
+            print("Your Input does not make sense.")
             input("\nPress Enter to return to the menu...")
             clear_screen()
             break
@@ -61,7 +68,9 @@ def get_pokemon_by_name():
     while True: # Runs a infinite loop until the user enters "1" to exit.
         pokemon = input("Enter the Name of the Pokemon/ID: ").strip().title() # Takes input and stores it in pokemon.
         if pokemon == "1":
-            return "Exit", None, None 
+            return "Exit", None, None
+        if pokemon.isalnum():
+            return "Invalid input", None, None
         # elif pokemon.isdigit(): # Fun Fact the Guard Condition was stoping a feture, now you can serch pokemon by ID
         #     return "Number" 
         else:
@@ -77,10 +86,10 @@ def get_pokemon_by_name():
                 # history.append(pokemon)
                 # s_history = " ".join(history)
                 return pokemon_data, extra_data, pokemon
-            except requests.RequestException:
-                return "404", None, None
-            except requests.exceptions.HTTPError:
+            except requests.exceptions.JSONDecodeError:
                 return "Not Found", None, None
+            except requests.exceptions.HTTPError:
+                return "404", None, None
             # if response.status_code ==  404:
             #     return "Data Not Found"
             # else:
@@ -169,7 +178,7 @@ def display_pokemon(response, extra_data, pokemon_name):
     print("                                                                              ")
     print("= General Info ===============================================================")
     print("                                                                              ")
-    print(f"| ID: {pokemon_id}                                      ") 
+    print(f"| ID: {pokemon_id}                               ") 
     print(f"| Name: {name}                                   ")    
     print(f"| Type: {all_types}                              ")
     print(f"| Abilities: {all_abilities}                     ")
@@ -215,6 +224,7 @@ def search_menu():
             break   
         else:
             print("Invalid Choice")
+            clear_screen()
  
 """ Info: 
 An old idea that taught me something.
