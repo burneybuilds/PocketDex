@@ -1,2 +1,3 @@
 requests 
-kinter  - For Desktop Vrs Only
+Tkinter  - For Desktop Vrs Only
+rich

@@ -1,15 +1,23 @@
 import requests
 import os
 import random 
+import time
+from rich.console import Console
+from rich.layout import Layout
+from rich.panel import Panel
+from rich.align import Align
 
-
-def cli_art(): 
-    print("██████   ██████   ██████ ██   ██ ███████ ████████       ██████  ███████ ██   ██")
-    print("██   ██ ██    ██ ██      ██  ██  ██         ██          ██   ██ ██      ██  ██ ")
-    print("██████  ██    ██ ██      █████   █████      ██    █████ ██   ██ █████   █████  ")
-    print("██      ██    ██ ██      ██  ██  ██         ██          ██   ██ ██      ██  ██ ")
-    print("██       ██████   ██████ ██   ██ ███████    ██          ██████  ███████ ██   ██")
-    print("                                                                           V1.0")
+def cli_art():
+    
+    logo = """
+    ██████   ██████   ██████ ██   ██ ███████ ████████       ██████  ███████ ██   ██
+    ██   ██ ██    ██ ██      ██  ██  ██         ██          ██   ██ ██      ██  ██
+    ██████  ██    ██ ██      █████   █████      ██    █████ ██   ██ █████   █████
+    ██      ██    ██ ██      ██  ██  ██         ██          ██   ██ ██      ██  ██
+    ██       ██████   ██████ ██   ██ ███████    ██          ██████  ███████ ██   ██
+                                                                                V1.0
+"""
+    return Align.center(logo)
 
 def about_me():
         clear_screen()
@@ -29,6 +37,36 @@ def about_me():
 
         input("\nPress Enter to return to the menu...")
         clear_screen() # Clear the screen after displaying.
+
+def random_info():
+    info = [
+        "💡 Tip: Search using either a Pokémon's name or its Pokédex ID.",
+        "⚡ Tip: Pokémon names are not case-sensitive.",
+        "📖 Did you know? Every Pokémon has a unique Pokédex number.",
+        "🎮 Tip: Try searching for your favorite starter Pokémon!",
+        "🌟 Fun Fact: The first Pokémon in the National Pokédex is Bulbasaur (#001).",
+        "🔍 Tip: Not sure what to search? Use the Random Pokémon feature.",
+        "📡 Pocket-Desk fetches live data directly from PokeAPI.",
+        "🆓 PokeAPI is a free and open-source Pokémon API used by developers worldwide.",
+        "⚙️ Pocket-Desk is an open-source project built with Python and Rich.",
+        "💻 Terminal applications can be fast, lightweight, and powerful.",
+        "🎨 Rich makes it possible to build beautiful command-line interfaces.",
+        "📚 Some Pokémon have multiple forms with different appearances.",
+        "⚡ Electric-type moves don't affect Ground-type Pokémon.",
+        "🔥 Charizard isn't a Dragon-type in its standard form.",
+        "🌱 Bulbasaur is both a Grass and Poison-type Pokémon.",
+        "💧 Water-type Pokémon are strong against Fire-types.",
+        "⭐ Legendary Pokémon are extremely rare in the Pokémon world.",
+        "🧩 Every search helps you explore the Pokémon universe.",
+        "🚀 Thanks for using Pocket-Desk!",
+        "❤️ Pocket-Desk is made for Pokémon fans and Python learners."
+    ]
+    
+    message = random.choice(info)
+    content = Align.center(message)
+    panel = Panel(content)
+    return panel
+
 
 def clear_screen(): #This Function Clear the screen.
     os.system("cls" if os.name == "nt" else "clear") # I have no idea what it does. 
@@ -69,7 +107,7 @@ def get_pokemon_by_name():
         pokemon = input("Enter the Name of the Pokemon/ID: ").strip().title() # Takes input and stores it in pokemon.
         if pokemon == "1":
             return "Exit", None, None
-        if pokemon.isalnum():
+        if not pokemon.isalnum():
             return "Invalid input", None, None
         # elif pokemon.isdigit(): # Fun Fact the Guard Condition was stoping a feture, now you can serch pokemon by ID
         #     return "Number" 
@@ -77,18 +115,22 @@ def get_pokemon_by_name():
             # url = requests.get("https://pokeapi.co/api/v2/pokemon/")
             pokemon_name = pokemon 
             try:
-                request_url = "https://pokeapi.co/api/v2/pokemon/" + pokemon_name
-                request_url1 = "https://pokeapi.co/api/v2/pokemon-species/" + pokemon_name
-                pokemon_data = requests.get(request_url).json() 
-                extra_data = requests.get(request_url1).json()
+                consol = Console() # makes an object 
+                print()
+                with consol.status("Fetching Pokémon..."): # this creates a loading spiner
+                    request_url = "https://pokeapi.co/api/v2/pokemon/" + pokemon_name
+                    request_url1 = "https://pokeapi.co/api/v2/pokemon-species/" + pokemon_name
+                    pokemon_data = requests.get(request_url).json() 
+                    extra_data = requests.get(request_url1).json()
                 # pokemon_data = response.json()
                 # extra_data = response_extra.json()
                 # history.append(pokemon)
                 # s_history = " ".join(history)
+                    time.sleep(0.20)
                 return pokemon_data, extra_data, pokemon
-            except requests.exceptions.JSONDecodeError:
+            except requests.exceptions.JSONDecodeError:  # this is tigged when there is no such pokemon
                 return "Not Found", None, None
-            except requests.exceptions.HTTPError:
+            except requests.exceptions.HTTPError:  # this is trigged when there is network problem.
                 return "404", None, None
             # if response.status_code ==  404:
             #     return "Data Not Found"
@@ -105,10 +147,14 @@ def random_pokemon_by_id():
     request_url = "https://pokeapi.co/api/v2/pokemon/" + pokemon_id
     request_url1 = "https://pokeapi.co/api/v2/pokemon-species/" + pokemon_id
     try:
-        pokemon_data = requests.get(request_url).json()
-        pokemon_extra = requests.get(request_url1).json()
+        consol = Console() # makes an object 
+        print() # you would ask why is this beacuse the spinner is stik te text adn it looks odd. same for get_pokemon_by_name()
+        with consol.status("Fetching Pokémon..."): # this creates a loading spiner
+            pokemon_data = requests.get(request_url).json()
+            pokemon_extra = requests.get(request_url1).json()
         # pokemon_data = response.json()
         # pokemon_extra = extra_data.json()
+            time.sleep(0.20)
         display_pokemon(pokemon_data, pokemon_extra, pokemon_id)
         input("\nPress Enter to return to the menu...")
         clear_screen()
@@ -202,6 +248,41 @@ def display_pokemon(response, extra_data, pokemon_name):
     print("1. Press 1 to go back || 2. Press 2 to Get More Info About the Pokemon")
     print()
 
+def api_status():
+    up_time = requests.get("https://pokeapi.co/api/v2/pokemon/")
+    content = Align.center("🟢 Connected")
+    if up_time.status_code == 200:
+        panel = Panel(content)
+    elif up_time.status_code == 404:
+        panel = Panel("🔴 OFFLINE")
+    
+    return panel
+
+# This fucntion is like the monitor or the cli app so.
+def layout_fucntion():
+    layout = Layout()
+    layout.split_column(
+    Layout(name="big-left"),
+    )
+    layout["big-left"].split_row(
+    Layout(name="left", ratio=3),
+    Layout(name="right", ratio=1),
+    )
+    layout["left"].split_column(
+    Layout(name="cli-art", ratio=2),
+    Layout(name="main-display", ratio=6),
+    Layout(name="input-box", ratio=1),
+    )
+    layout["right"].split_column(
+    Layout(name="api-status", ratio=1),
+    Layout(name="recent_search",ratio=5),
+    Layout(name="extra-info", ratio=3),
+    )
+
+    layout["api-status"].update(api_status())
+    layout["cli-art"].update(cli_art())
+    layout["extra-info"].update(random_info())
+    print(layout)
 
 def search_menu():
     while True: #Runs a infinite loop until the user enters "3" to exit.
