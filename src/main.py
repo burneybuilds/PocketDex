@@ -1,14 +1,14 @@
 import requests
 import os
 import random 
-import time
 from rich.console import Console
 from rich.layout import Layout
 from rich.panel import Panel
 from rich.align import Align
+import command
+
 
 def cli_art():
-    
     logo = """
     ██████   ██████   ██████ ██   ██ ███████ ████████       ██████  ███████ ██   ██
     ██   ██ ██    ██ ██      ██  ██  ██         ██          ██   ██ ██      ██  ██
@@ -71,103 +71,20 @@ def random_info():
 def clear_screen(): #This Function Clear the screen.
     os.system("cls" if os.name == "nt" else "clear") # I have no idea what it does. 
 
-# @ : This function takes the response from the API and displays it in a nice format.
-def handle_search(): 
-    while True: 
-        response, extra_data, pokemon_name = get_pokemon_by_name()
-        if response == "Exit": 
-            clear_screen() 
-            break
-        elif response == "404": # No signal, no Pokémon. The internet gods said no.
-            print()
-            print("Could not connect to PokeAPI.")
-            input("\nPress Enter to return to the menu...") 
-            clear_screen()
-            break
-        elif response == "Not Found":
-            print()
-            print("No Pokemon With such Name Found.")
-            input("\nPress Enter to return to the menu...")
-            clear_screen()
-            break
-        elif response == "Invalid input":
-            print()
-            print("Your Input does not make sense.")
-            input("\nPress Enter to return to the menu...")
-            clear_screen()
-            break
-        # elif response == "Number":
-        #     print("Invalid Input.")
-        else: # show the ouput in a nice format.
-            display_pokemon(response, extra_data, pokemon_name)
 
-def get_pokemon_by_name():
-    # history = [] 
-    while True: # Runs a infinite loop until the user enters "1" to exit.
-        pokemon = input("Enter the Name of the Pokemon/ID: ").strip().title() # Takes input and stores it in pokemon.
-        if pokemon == "1":
-            return "Exit", None, None
-        if not pokemon.isalnum():
-            return "Invalid input", None, None
-        # elif pokemon.isdigit(): # Fun Fact the Guard Condition was stoping a feture, now you can serch pokemon by ID
-        #     return "Number" 
-        else:
-            # url = requests.get("https://pokeapi.co/api/v2/pokemon/")
-            pokemon_name = pokemon 
-            try:
-                consol = Console() # makes an object 
-                print()
-                with consol.status("Fetching Pokémon..."): # this creates a loading spiner
-                    request_url = "https://pokeapi.co/api/v2/pokemon/" + pokemon_name
-                    request_url1 = "https://pokeapi.co/api/v2/pokemon-species/" + pokemon_name
-                    pokemon_data = requests.get(request_url).json() 
-                    extra_data = requests.get(request_url1).json()
-                # pokemon_data = response.json()
-                # extra_data = response_extra.json()
-                # history.append(pokemon)
-                # s_history = " ".join(history)
-                    time.sleep(0.20)
-                return pokemon_data, extra_data, pokemon
-            except requests.exceptions.JSONDecodeError:  # this is tigged when there is no such pokemon
-                return "Not Found", None, None
-            except requests.exceptions.HTTPError:  # this is trigged when there is network problem.
-                return "404", None, None
-            # if response.status_code ==  404:
-            #     return "Data Not Found"
-            # else:
-            #     pokemon_data = response.json()  # Get the data from the api in the json format.
-            #     return pokemon_data #Sends the json data to bridge fucntion to display the data in a nice format.
+# def handle_search(): 
+"""
+Moved to  search to def search_menu():
+"""
 
-
-def random_pokemon_by_id():
-    pokemon_id = random.randint(1, 1025)
-    pokemon_id = str(pokemon_id)
-    # Build both API endpoints because species information
-    # and Pokémon stats come from different endpoints.
-    request_url = "https://pokeapi.co/api/v2/pokemon/" + pokemon_id
-    request_url1 = "https://pokeapi.co/api/v2/pokemon-species/" + pokemon_id
-    try:
-        consol = Console() # makes an object 
-        print() # you would ask why is this beacuse the spinner is stik te text adn it looks odd. same for get_pokemon_by_name()
-        with consol.status("Fetching Pokémon..."): # this creates a loading spiner
-            pokemon_data = requests.get(request_url).json()
-            pokemon_extra = requests.get(request_url1).json()
-        # pokemon_data = response.json()
-        # pokemon_extra = extra_data.json()
-            time.sleep(0.20)
-        display_pokemon(pokemon_data, pokemon_extra, pokemon_id)
-        input("\nPress Enter to return to the menu...")
-        clear_screen()
-    except requests.RequestException:
-        print("Could not connect to PokeAPI.") 
-        input("\nPress Enter to return to the menu...")
-        clear_screen()
-        # if response.status_code == 200:                           # Old status-code handling kept for reference.
-        #     display_pokemon(pokemon_data)                         # The current version uses try/except instead.
-        #     input("\nPress Enter to return to the menu...")
-        #     clear_screen()
-        # elif response.status_code == 404:
-        #     return "Connection Time-Out.""
+# def get_pokemon_by_name():
+"""
+Moved this function to poke_api.py 
+"""
+# def random_pokemon_by_id():
+"""
+Moved this fucntion to poke_api.py 
+"""
 
 
 s_history = [] # This needs to sit outside the fucntion or else it will get updated eveytime the fucntion is called.
@@ -285,27 +202,50 @@ def layout_fucntion():
     print(layout)
 
 def search_menu():
-    while True: #Runs a infinite loop until the user enters "3" to exit.
-        cli_art() # You can remove this if you want. 
-        print("=======================")
-        print("1. Search Pokemon (Name / ID)  ") 
-        print("2. Random Pokemon              ")
-        print("3. About Me                    ") 
-        print("4. Exit                        ")
-        print("=======================")
-        user_choice = input("Enter your Choice: ") #Takes Input and stores it in user_choice.
-        if user_choice == "1":  # Currently, 1 is string not a int and so the other.
-            handle_search()
-        elif user_choice == "2":
-            random_pokemon_by_id()
-        elif user_choice == "3":
-            about_me() 
-        elif user_choice == "4":
-            clear_screen()
-            break   
-        else:
-            print("Invalid Choice")
-            clear_screen()
+    while True:
+        keyword, pokemon_name = command.commands_input()
+
+        if keyword == "/search":
+            response, extra_data, pokemon_name = command.search_pokemon(pokemon_name)
+            display_pokemon(response, extra_data, pokemon_name)
+        elif keyword == "/random":
+            response, extra_data, pokemon_name = command.random_pokemon()
+            display_pokemon(response, extra_data, pokemon_name)
+        elif keyword == "/clear":
+            os.system("cls" if os.name == "nt" else "clear")
+            continue
+        elif keyword == "/exit":
+            print("Bye...")
+            os.system("cls" if os.name == "nt" else "clear")
+            break
+        elif keyword == "/help":
+            info = command.help()
+            for i in info:
+                print(i)
+        elif keyword == "/info":
+            about_me()
+        
+        # print("=======================")
+        # print("1. Search Pokemon (Name / ID)  ") 
+        # print("2. Random Pokemon              ")
+        # print("3. About Me                    ") 
+        # print("4. Exit                        ")
+        # print("=======================")
+        # user_choice = input("Enter your Choice: ") #Takes Input and stores it in user_choice.
+        # if user_choice == "1":  # Currently, 1 is string not a int and so the other.
+        #     response, extra_data, pokemon_name = command.commands_input()
+        #     display_pokemon(response, extra_data, pokemon_name)
+        # elif user_choice == "2":
+        #     response, extra_data, pokemon_name = poke_api.random_pokemon_by_id()
+        #     display_pokemon(response, extra_data, pokemon_name)
+        # elif user_choice == "3":
+        #     about_me() 
+        # elif user_choice == "4":
+        #     clear_screen()
+        #     break   
+        # else:
+        #     print("Invalid Choice")
+        #     clear_screen()
  
 """ Info: 
 An old idea that taught me something.
