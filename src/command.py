@@ -1,4 +1,3 @@
-import os
 import poke_api
 
 commands_info = [
@@ -33,6 +32,7 @@ def commands_input():
         
 
     # This is one of my failed trys of keepign everything in one fucntion big brain me .
+    
     # if not user_input == "/search":
     #     print("No... Wirte /search pikachu or /search 25")
     #     continue

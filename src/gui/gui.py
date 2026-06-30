@@ -1,7 +1,11 @@
 import tkinter as tk
 
+"""
+Not working in this rn.
 
+"""
 def StringVar():
+
     pass
 
 root = tk.Tk()

@@ -1,3 +1,5 @@
 requests 
-Tkinter  - For Desktop Vrs Only
-rich
+Textualize
+
+# Gui 
+Tkinter 
