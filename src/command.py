@@ -20,8 +20,8 @@ def random_pokemon():
 def help():
     return commands_info
 
-def commands_input():
-    user_input = input("<Pocket-Dex> ")
+def commands_input(user_input):
+    #user_input = input("<Pocket-Dex> ")
 
     parts = user_input.split(maxsplit=1)
 

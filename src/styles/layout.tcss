@@ -1,0 +1,39 @@
+#left {
+    width: 5fr;   /* 80% */
+}
+
+#right {
+    width: 2fr;   /* 20% */
+}
+
+CLIArt {
+    width: 100%;
+    height: 7;
+    border: solid magenta;
+}
+
+APIStatus {
+    width: 100%;
+    height: 3;
+    border: solid yellow;
+}
+
+MainDisplay {
+        width: 1fr;
+        height: 1fr;
+        border: solid green;
+}
+
+AuthorNotes {
+        width: 100%;
+        height: 1fr;
+        border: solid red;
+}
+RecentSearches {
+        width: 100%;
+        height: 1fr;
+        border: solid magenta;
+}
+
+
+
