@@ -44,9 +44,9 @@ class layout_fucntion(App):
             Special Defense: {data['special_defense']}
             Speed: {data['pokemon_speed']}
 
-            Description: {data['description']}
             Status: {data['status']}
             Moves: {data['moves']}
+            Description: {data['description']}
         """
         self.query_one("#main_display").update(text) # Find the widget which have the id of main_display.
         event.input.value = "" # Clear the input box after you press enter 
