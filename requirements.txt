@@ -2,5 +2,3 @@ requests
 Textualize
 pytest
 
-# Gui 
-Tkinter 
