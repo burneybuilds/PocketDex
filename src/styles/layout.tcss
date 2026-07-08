@@ -14,8 +14,10 @@ CLIArt {
 
 APIStatus {
     width: 100%;
-    height: 3;
+    content-align: center middle;
+
     border: solid yellow;
+    height: auto;
 }
 
 MainDisplay {
@@ -26,12 +28,13 @@ MainDisplay {
 
 AuthorNotes {
         width: 100%;
-        height: 1fr;
-        border: solid red;
+        height: auto;
+        content-align: center top;
+         border: solid yellow;
 }
 RecentSearches {
         width: 100%;
-        height: 1fr;
+        height: 3fr;
         border: solid magenta;
 }
 

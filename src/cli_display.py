@@ -2,10 +2,11 @@ from textual.app import App, ComposeResult
 from textual.binding import Binding
 from textual.containers import Vertical, Horizontal
 from textual.widgets import Static, Input, Button
-from command import commands_input, help
-import parser
+from .command import commands_input
+from src import parser
 import os
 import random
+from .poke_api import api_status
 
 
 class layout_fucntion(App):
@@ -20,8 +21,8 @@ class layout_fucntion(App):
 
             with Vertical(id="right"): # This divides the right screen into 3 Parts.
                 yield APIStatus()
-                yield RecentSearches()
                 yield AuthorNotes()
+                yield RecentSearches()
     
     # This fucntion binds the input with the main display.
     def on_input_submitted(self, event: Input.Submitted):
@@ -29,11 +30,24 @@ class layout_fucntion(App):
         keyword, argument = commands_input(pokemon_name) 
         data = self.get_data(keyword , argument)
         text = f"""
+            ID: {data['id']}
             Name: {data['name']}
+            Height: {data['height']}
+            Weight: {data['weight']}
+            Types: {data['types']}
+            Abilities: {data['abilities']}
+
             HP: {data['hp']}
             Attack: {data['attack']}
             Defense: {data['defense']}
-            """
+            Special Attack: {data['special_attack']}
+            Special Defense: {data['special_defense']}
+            Speed: {data['pokemon_speed']}
+
+            Description: {data['description']}
+            Status: {data['status']}
+            Moves: {data['moves']}
+        """
         self.query_one("#main_display").update(text) # Find the widget which have the id of main_display.
         event.input.value = "" # Clear the input box after you press enter 
     
@@ -63,7 +77,8 @@ class layout_fucntion(App):
 
 class CliArt(Static):
     def on_mount(self):
-        self.update("""    __________              __      __            ________          __  
+        self.update("""   
+    __________              __      __            ________          __  
     \______   \____   ____ |  | ___/  |_          \______ \   ____ |  | __
     |     ___/  _ \_/ ___\|  |/ /\   __\  ______  |    |  \_/ __ \|  |/ /
     |    |  (  <_> )  \___|    <  |  |   /_____/  |    `   \  ___/|    < 
@@ -83,37 +98,27 @@ class UserInput(Static):
     
 class APIStatus(Static):
     def on_mount(self):
-        self.update("🟢 PokeAPI Online")
+        status =  api_status()
+        self.update(status)
+        
 
+class AuthorNotes(Static):
+    def on_mount(self):
+        commands_info = [
+        "/help    Show all commands",
+        "/search  Search Pokémon",
+        "/random  Random Pokémon",
+        "/clear   Clear screen",
+        "/info    About Pocket-Dex",
+        "/exit    Exit application",
+        ]
+        text = "\n".join(commands_info)
+        self.update(text)
+        
 
 class RecentSearches(Static):
     pass
 
-
-class AuthorNotes(Static):
-    def random_info():
-        info = [
-            "💡 Tip: Search using either a Pokémon's name or its Pokédex ID.",
-            "⚡ Tip: Pokémon names are not case-sensitive.",
-            "📖 Did you know? Every Pokémon has a unique Pokédex number.",
-            "🎮 Tip: Try searching for your favorite starter Pokémon!",
-            "🌟 Fun Fact: The first Pokémon in the National Pokédex is Bulbasaur (#001).",
-            "🔍 Tip: Not sure what to search? Use the Random Pokémon feature.",
-            "📡 Pocket-Desk fetches live data directly from PokeAPI.",
-            "🆓 PokeAPI is a free and open-source Pokémon API used by developers worldwide.",
-            "⚙️ Pocket-Desk is an open-source project built with Python and Rich.",
-            "💻 Terminal applications can be fast, lightweight, and powerful.",
-            "🎨 Rich makes it possible to build beautiful command-line interfaces.",
-            "📚 Some Pokémon have multiple forms with different appearances.",
-            "⚡ Electric-type moves don't affect Ground-type Pokémon.",
-            "🔥 Charizard isn't a Dragon-type in its standard form.",
-            "🌱 Bulbasaur is both a Grass and Poison-type Pokémon.",
-            "💧 Water-type Pokémon are strong against Fire-types.",
-            "⭐ Legendary Pokémon are extremely rare in the Pokémon world.",
-            "🧩 Every search helps you explore the Pokémon universe.",
-            "🚀 Thanks for using Pocket-Desk!",
-            "❤️ Pocket-Desk is made for Pokémon fans and Python learners."
-        ]
 
 
 if __name__ == "__main__":

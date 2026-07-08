@@ -1,13 +1,4 @@
-import poke_api
-
-commands_info = [
-    "/help : Show all available commands.",
-    "/search : Search for a Pokémon by name or Pokédex ID. Example: /search pikachu",
-    "/random : Display a random Pokémon.",
-    "/clear : Clear the terminal screen.",
-    "/info : Show information about Pocket-Dex.",
-    "/exit : Exit the application."
-]
+from src import poke_api
 
 def search_pokemon(pokemon_name):
     response, extra_data, pokemon_name = poke_api.get_pokemon_by_name(pokemon_name)
@@ -17,12 +8,11 @@ def random_pokemon():
     response, extra_data, pokemon_name = poke_api.random_pokemon_by_id()
     return response, extra_data, pokemon_name
 
-def help():
-    return commands_info
+# Moved to Cli_display
+# def help():
+#     return commands_info
 
 def commands_input(user_input):
-    #user_input = input("<Pocket-Dex> ")
-
     parts = user_input.split(maxsplit=1)
 
     keyword = parts[0]
