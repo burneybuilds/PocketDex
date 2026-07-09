@@ -21,22 +21,22 @@ APIStatus {
 }
 
 MainDisplay {
-        width: 1fr;
-        height: 1fr;
-        border: solid green;
+    width: 1fr;
+    height: 1fr;
+    border: solid green;
+    content-align: left top;
 }
 
+PokemonCard {
+        width: 100%;
+        height: 3fr;
+        border: solid magenta;
+}
 AuthorNotes {
         width: 100%;
         height: auto;
         content-align: center top;
          border: solid yellow;
 }
-RecentSearches {
-        width: 100%;
-        height: 3fr;
-        border: solid magenta;
-}
-
 
 

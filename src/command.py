@@ -1,17 +1,9 @@
+import random
+
+from src import parser
 from src import poke_api
 
-def search_pokemon(pokemon_name):
-    response, extra_data, pokemon_name = poke_api.get_pokemon_by_name(pokemon_name)
-    return response, extra_data, pokemon_name
-
-def random_pokemon():
-    response, extra_data, pokemon_name = poke_api.random_pokemon_by_id()
-    return response, extra_data, pokemon_name
-
-# Moved to Cli_display
-# def help():
-#     return commands_info
-
+# Take input from the user and divide the input into two part.
 def commands_input(user_input):
     parts = user_input.split(maxsplit=1)
 
@@ -19,25 +11,25 @@ def commands_input(user_input):
     argument = parts[1] if len(parts) > 1 else None
 
     return keyword, argument
-        
-
-    # This is one of my failed trys of keepign everything in one fucntion big brain me .
     
-    # if not user_input == "/search":
-    #     print("No... Wirte /search pikachu or /search 25")
-    #     continue
 
-    # if keyword == "/search":
-    #     response, extra_data, pokemon_name = poke_api.get_pokemon_by_name(pokemon_name)
-    #     return response, extra_data, pokemon_name, keyword, None
-    # elif keyword == "/random":
-    #     response, extra_data, pokemon_name = poke_api.random_pokemon_by_id()
-    #     return response, extra_data, pokemon_name, keyword , None
-    # elif keyword == "/clear":
-    #     return None, None, None, keyword , None# I have no idea what it does.
-    # elif keyword  == "/exit":
-    #     return None, None, None, keyword , None
-    # elif keyword == "/help":
-    #     return None, None, None, keyword , commands
-    # elif keyword == "/info":
-    #     return about_me()
+def get_data(keyword ,pokemon_name): 
+    
+    if poke_api.check_endpoint(pokemon_name) == False:
+        return "404"
+
+    if keyword == "/search":
+        data = parser.parser_data(pokemon_name)
+        return data 
+    elif keyword == "/random":
+        pokemon_id = random.randint(1, 1025)
+        data = parser.parser_data(str(pokemon_id))
+        return data
+        
+    elif keyword == "/help":
+        info = help()
+        for i in info:
+            print(i)
+
+    else:
+        return "404"

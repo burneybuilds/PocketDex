@@ -15,6 +15,7 @@ Returns:
 
         ("404", None) if an HTTP-related error occurs.
 """
+
 def get_pokemon_by_name(pokemon_name):
     request_url_main = rq.get(
             "https://pokeapi.co/api/v2/pokemon/"+pokemon_name
@@ -41,3 +42,13 @@ def api_status():
         return "🟢 Online"
     else:
         return "🔴 OFFLINE"
+    
+def check_endpoint(pokemon_name):
+    req_data = rq.get("https://pokeapi.co/api/v2/pokemon/" + pokemon_name)
+    try:
+        if req_data.status_code == 200:
+            return True
+        else:
+            return False
+    except rq.HTTPError:
+        return False

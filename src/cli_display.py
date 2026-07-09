@@ -1,80 +1,132 @@
-from textual.app import App, ComposeResult
-from textual.binding import Binding
-from textual.containers import Vertical, Horizontal
-from textual.widgets import Static, Input, Button
-from .command import commands_input
-from src import parser
+# Packages import`s 
 import os
 import random
+
+# Modules import`s
+from .parser import parser_data
 from .poke_api import api_status
+from .command import commands_input, get_data
+
+# Textual Modules Import
+from textual.binding import Binding
+from textual.app import App, ComposeResult
+from textual.widgets import Static, Input
+from textual.containers import Vertical, Horizontal
+
+# Rich Modules Import 
+from rich.columns import Columns
+from rich.console import Group
+from rich.panel import Panel
+from rich.align import Align
+from rich.table import Table
+from textwrap import fill
 
 
 class layout_fucntion(App):
-    CSS_PATH = "styles\layout.tcss"
+    CSS_PATH = "styles/layout.tcss"
 
     def compose(self) -> ComposeResult:
-        with Horizontal(): # splits screen into left and right
-            with Vertical(id="left"):  # This divides the left screen into 3 Parts.
+        with Horizontal():
+            with Vertical(id="left"):
                 yield CliArt()
                 yield MainDisplay(id="main_display")
                 yield UserInput()
 
-            with Vertical(id="right"): # This divides the right screen into 3 Parts.
+            with Vertical(id="right"):
                 yield APIStatus()
+                yield PokemonCard(id="pokemon_card")
                 yield AuthorNotes()
-                yield RecentSearches()
-    
-    # This fucntion binds the input with the main display.
+
+    # Handles user input
     def on_input_submitted(self, event: Input.Submitted):
-        pokemon_name = event.value  # events get the value from the user and stores it to pokemon_name.
-        keyword, argument = commands_input(pokemon_name) 
-        data = self.get_data(keyword , argument)
-        text = f"""
-            ID: {data['id']}
-            Name: {data['name']}
-            Height: {data['height']}
-            Weight: {data['weight']}
-            Types: {data['types']}
-            Abilities: {data['abilities']}
+        user_input = event.value
+        user_input = user_input.strip().lower()
+        
+        if user_input == "/exit":
+            self.exit()
+            return
 
-            HP: {data['hp']}
-            Attack: {data['attack']}
-            Defense: {data['defense']}
-            Special Attack: {data['special_attack']}
-            Special Defense: {data['special_defense']}
-            Speed: {data['pokemon_speed']}
+        keyword, argument = commands_input(user_input)
 
-            Status: {data['status']}
-            Moves: {data['moves']}
-            Description: {data['description']}
-        """
-        self.query_one("#main_display").update(text) # Find the widget which have the id of main_display.
-        event.input.value = "" # Clear the input box after you press enter 
+        # Check if the keyword is clear then clear the screen and return early. 
+        if keyword == "/clear":
+            self.query_one("#main_display").update("Search a Pokémon to view its information.")
+            # self.query_one("#pokemon_card", PokemonCard).show_card("Seems like its been a while....")
+            event.input.value = ""
+            return 
     
-    def get_data(self, keyword, pokemon_name):
-        if keyword == "/search":
-            data = parser.parser_data(pokemon_name)
-            if data == "Not Found":
-                print("Invalid Input.")
-            return data
-        elif keyword == "/random":
-            pokemon_id = random.randint(1, 1025)
-            data = parser.parser_data(str(pokemon_id))
-            return data
-        elif keyword == "/clear":
-            os.system("cls" if os.name == "nt" else "clear")
-        elif keyword == "/exit":
-            print("Bye...")
-            os.system("cls" if os.name == "nt" else "clear")
-        elif keyword == "/help":
-            info = help()
-            for i in info:
-                print(i)
-        elif keyword == "/info":
-            pass
-           # about_me()
-    
+        if keyword == "/info":
+            self.query_one("#main_display").update("Hi, I'm Tushar. I built Pocket-Dex to learn Python, APIs, and \nclean code. The bugs weren't part of the Pokédex... \nthey just appeared naturally.") 
+            event.input.value = ""
+            return
 
+        #if the keyword is not clear or exit continue with this program.
+        pokemon_data = get_data(keyword, argument)     
+    
+        # If no data is found return early. else continue with the program.
+        if pokemon_data == "404":
+            self.query_one("#main_display").update("Invalid Input. \nPokemon not found.")
+            event.input.value = ""
+            return
+
+        self.query_one("#pokemon_card", PokemonCard).show_card(pokemon_data)
+
+        # Create the Rich display
+        display = self.pokemon_display(pokemon_data)
+
+        # Update the main display
+        self.query_one("#main_display").update(display)
+        
+    
+        event.input.value = ""
+
+
+    # Creates the Rich UI only
+    def pokemon_display(self, data):
+
+        basic = Table.grid(padding=(0, 1))
+        basic.add_column(style="cyan", width=12)
+        basic.add_column()
+
+        basic.add_row("ID", str(data["id"]))
+        basic.add_row("Name", data["name"])
+        basic.add_row("Height", str(data["height"]))
+        basic.add_row("Weight", str(data["weight"]))
+        basic.add_row("Types", str(data["types"]))
+        basic.add_row("Abilities", str(data["abilities"]))
+
+
+        stats = Table.grid(padding=(0, 1))
+        stats.add_column(style="yellow", width=14)
+        stats.add_column()
+
+        stats.add_row("HP", str(data["hp"]))
+        stats.add_row("Attack", str(data["attack"]))
+        stats.add_row("Defense", str(data["defense"]))
+        stats.add_row("Sp. Attack", str(data["special_attack"]))
+        stats.add_row("Sp. Defense", str(data["special_defense"]))
+        stats.add_row("Speed", str(data["pokemon_speed"]))
+
+
+        top = Columns(
+            [
+                Panel(basic, title="Basic Info", border_style="cyan"),
+                Panel(stats, title="Base Stats", border_style="green"),
+            ],
+            equal=True,
+            expand=True,
+        )
+
+
+        desc = Panel(
+            fill(data["description"], width=70),
+            title="Description",
+            border_style="magenta",
+        )
+
+
+        return Group(top, desc)
+    
 class CliArt(Static):
     def on_mount(self):
         self.update("""   
@@ -101,6 +153,47 @@ class APIStatus(Static):
         status =  api_status()
         self.update(status)
         
+class PokemonCard(Static):
+    def on_mount(self):
+        self.update(
+            Panel(
+                "Search a Pokémon...",
+                title="Pokémon Card"
+            )
+        )
+
+
+
+    def show_card(self, data, rarity="Common"):
+
+        card = Table.grid(padding=1)
+        card.add_column(justify="center")
+
+        card.add_row(f"[bold yellow]{data['name'].upper()}[/]")
+        card.add_row("")
+        card.add_row(f"[cyan]Type:[/] {(data['types'])}")
+        card.add_row("")
+        card.add_row(f"[bold green]★ {rarity}[/]")
+
+        self.update(
+            Panel(
+                Align.center(card),
+                title="Pokémon Card",
+                border_style=self.get_border(rarity),
+            )
+        )
+
+    def get_border(self, rarity):
+
+        borders = {
+            "Common": "white",
+            "Rare": "blue",
+            "Epic": "magenta",
+            "Legendary": "red",
+            "Gold": "yellow",
+        }
+
+        return borders.get(rarity, "white")
 
 class AuthorNotes(Static):
     def on_mount(self):
@@ -114,47 +207,7 @@ class AuthorNotes(Static):
         ]
         text = "\n".join(commands_info)
         self.update(text)
-        
-
-class RecentSearches(Static):
-    pass
-
-
 
 if __name__ == "__main__":
     app = layout_fucntion()
     app.run()
-
-
-
-
-"""
-This is the legacy pannel of the cli display using rich Lib but then it have less fucntions so i changes to Textual
-"""
-# This fucntion is like the monitor or the cli app so.
-# def layout_fucntion():
-#     layout = Layout()
-#     layout.split_column(
-#     Layout(name="big-left"),
-#     )
-#     layout["big-left"].split_row(
-#     Layout(name="left", ratio=3),
-#     Layout(name="right", ratio=1),
-#     )
-#     layout["left"].split_column(
-#     Layout(name="cli-art", ratio=2),
-#     Layout(name="main-display", ratio=6),
-#     Layout(name="input-box", ratio=1),
-#     )
-#     layout["right"].split_column(
-#     Layout(name="api-status", ratio=1),
-#     Layout(name="recent_search",ratio=5),
-#     Layout(name="extra-info", ratio=3),
-#     )
-
-#     layout["cli-art"].update(cli_art())
-#     layout["extra-info"].update(random_info())
-#     print(layout)
-#     # layout["api-status"].update(api_status())
-     
-# layout_fucntion()
