@@ -125,6 +125,11 @@ def parser_data(pokemon_name):
     
     return data
     
-    # s_history = [] # empty list 
-    # s_history.append(pokemon_name)  # Future me will forget what I searched.
-    # searchs = ", ".join(s_history)
+def prase_by_type(type):
+    pokemon_names = []
+    raw_data = poke_api.get_pokemon_by_type(type)
+    
+    for names in raw_data["pokemon"]:
+        pokemon_names.append(names["pokemon"]["name"])
+    
+    return pokemon_names

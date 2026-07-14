@@ -35,6 +35,17 @@ def get_pokemon_by_name(pokemon_name):
     except rq.exceptions.HTTPError: 
         return "404", None, None
     
+def get_pokemon_by_type(type):
+    request_url_main = rq.get(
+        f"https://pokeapi.co/api/v2/type/{type}"
+    )
+    try:
+        pokemon_type_data = request_url_main.json()
+        return pokemon_type_data
+    except rq.exceptions.JSONDecodeError:
+        return "Not Found"
+    except rq.exceptions.HTTPError:
+        return "404"
 
 def api_status():
     up_time = rq.get("https://pokeapi.co/api/v2/pokemon/")

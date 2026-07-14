@@ -1,21 +1,13 @@
-# Packages import`s 
-import os
-import random
-
 # Modules import`s
-from .parser import parser_data
 from .poke_api import api_status
 from .command import commands_input, get_data
 
 # Textual Modules Import
-from textual.binding import Binding
 from textual.app import App, ComposeResult
 from textual.widgets import Static, Input
 from textual.containers import Vertical, Horizontal
 
 # Rich Modules Import 
-from rich.columns import Columns
-from rich.console import Group
 from rich.panel import Panel
 from rich.align import Align
 from rich.table import Table
@@ -46,86 +38,36 @@ class layout_fucntion(App):
             self.exit()
             return
 
-        keyword, argument = commands_input(user_input)
-
-        # Check if the keyword is clear then clear the screen and return early. 
-        if keyword == "/clear":
+        if user_input == "/clear":
             self.query_one("#main_display").update("Search a Pokémon to view its information.")
-            # self.query_one("#pokemon_card", PokemonCard).show_card("Seems like its been a while....")
             event.input.value = ""
             return 
     
-        if keyword == "/info":
+        if user_input == "/info":
             self.query_one("#main_display").update("Hi, I'm Tushar. I built Pocket-Dex to learn Python, APIs, and \nclean code. The bugs weren't part of the Pokédex... \nthey just appeared naturally.") 
             event.input.value = ""
             return
 
+        keyword, argument = commands_input(user_input)
+
         #if the keyword is not clear or exit continue with this program.
-        pokemon_data = get_data(keyword, argument)     
+        pokemon_data, history = get_data(keyword, argument)     
     
         # If no data is found return early. else continue with the program.
         if pokemon_data == "404":
             self.query_one("#main_display").update("Invalid Input. \nPokemon not found.")
             event.input.value = ""
             return
-
-        self.query_one("#pokemon_card", PokemonCard).show_card(pokemon_data)
-
-        # Create the Rich display
-        display = self.pokemon_display(pokemon_data)
-
-        # Update the main display
-        self.query_one("#main_display").update(display)
+        else:
+            # self.query_one("#pokemon_card", PokemonCard).show_card(pokemon_data)
+            # Create the Rich display
+            # display = self.pokemon_display(pokemon_data)
+            # Update the main display
+            self.query_one("#main_display").update(pokemon_data)
         
-    
         event.input.value = ""
 
 
-    # Creates the Rich UI only
-    def pokemon_display(self, data):
-
-        basic = Table.grid(padding=(0, 1))
-        basic.add_column(style="cyan", width=12)
-        basic.add_column()
-
-        basic.add_row("ID", str(data["id"]))
-        basic.add_row("Name", data["name"])
-        basic.add_row("Height", str(data["height"]))
-        basic.add_row("Weight", str(data["weight"]))
-        basic.add_row("Types", str(data["types"]))
-        basic.add_row("Abilities", str(data["abilities"]))
-
-
-        stats = Table.grid(padding=(0, 1))
-        stats.add_column(style="yellow", width=14)
-        stats.add_column()
-
-        stats.add_row("HP", str(data["hp"]))
-        stats.add_row("Attack", str(data["attack"]))
-        stats.add_row("Defense", str(data["defense"]))
-        stats.add_row("Sp. Attack", str(data["special_attack"]))
-        stats.add_row("Sp. Defense", str(data["special_defense"]))
-        stats.add_row("Speed", str(data["pokemon_speed"]))
-
-
-        top = Columns(
-            [
-                Panel(basic, title="Basic Info", border_style="cyan"),
-                Panel(stats, title="Base Stats", border_style="green"),
-            ],
-            equal=True,
-            expand=True,
-        )
-
-
-        desc = Panel(
-            fill(data["description"], width=70),
-            title="Description",
-            border_style="magenta",
-        )
-
-
-        return Group(top, desc)
     
 class CliArt(Static):
     def on_mount(self):
@@ -201,6 +143,8 @@ class AuthorNotes(Static):
         "/help    Show all commands",
         "/search  Search Pokémon",
         "/random  Random Pokémon",
+        "/compare Random Pokémon",
+        "/types   Random Pokémon",
         "/clear   Clear screen",
         "/info    About Pocket-Dex",
         "/exit    Exit application",

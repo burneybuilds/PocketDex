@@ -1,6 +1,7 @@
 from src.parser import parse_description
 from src.parser import parse_basic_stats
 from src.parser import parse_basic_info
+from src.parser import prase_by_type
 import requests as rq
 
 def test_description():
@@ -29,6 +30,10 @@ def test_basic_info():
     assert data["weight"] == 60
     assert data["types"] == "electric"
     assert data["abilities"] == "static / lightning-rod"
+
+def test_type_info():
+    assert prase_by_type({"name" : "pikachu"}) == "pikachu"
+
 
 def test_status():
     pass
