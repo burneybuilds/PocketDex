@@ -46,5 +46,5 @@ def get_data(keyword ,argument):
             print(i)
 
     else:
-        return "404"
+        return "404", None
 
