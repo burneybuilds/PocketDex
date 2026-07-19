@@ -34,6 +34,11 @@ class layout_fucntion(App):
         user_input = event.value
         user_input = user_input.strip().lower()
         
+        if user_input == "":
+            self.query_one("#main_display").update("Invlaid input.")
+            event.input.value = ""
+            return
+
         if user_input == "/exit":
             self.exit()
             return

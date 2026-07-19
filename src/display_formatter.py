@@ -2,6 +2,7 @@ from rich.columns import Columns
 from rich.console import Group
 from rich.panel import Panel
 from rich.table import Table
+from rich.console import Align
 from textwrap import fill
 
 
@@ -50,9 +51,8 @@ def search_pokemon_display( data):
 
     return Group(top, desc)
 
-def type_pokemone_display(type_data):
+def make_table(data, start_index):
     table = Table(
-        title="Type",
         show_header=True,
         header_style="bold cyan",
     )
@@ -60,10 +60,27 @@ def type_pokemone_display(type_data):
     table.add_column("#", style="dim", justify="right", width=4)
     table.add_column("Pokémon", style="bold green")
 
-    for index, name in enumerate(type_data, start=1):
-        table.add_row(str(index), name.capitalize())
+    for i, name in enumerate(data, start=start_index):
+        table.add_row(str(i), name.capitalize())
 
     return table
 
-def compare_pokemone_display():
-    pass
+def type_pokemon_display(type_data):
+    mid = (len(type_data) + 1) // 2
+
+    left = make_table(type_data[:mid], 1)
+    right = make_table(type_data[mid:], mid + 1)
+
+    return Columns([left, right], expand=True)
+
+# * TO-DO: This needes to be done.
+# def error_display(message: str):
+#     return Align.center(
+#         Panel(
+#             Text(message, style="bold red", justify="center"),
+#             title="[red]Error[/red]",
+#             border_style="red",
+#             width=60,
+#         ),
+#         vertical="middle",
+#     )

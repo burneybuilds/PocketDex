@@ -41,6 +41,15 @@ Run the application:
 Soon
 ```
 
+# Projects Over view 
+
+You can explore the code, modify it, or simply follow the flow to understand how everything works.
+
+If you need help, check the `docs` folder:
+
+docs/
+├── build-your-own-cli.md   # How I built the project, libraries used, and lessons learned.
+└── setup.md                # Common setup issues and their fixes.
 
 ## Contributing & Questions
 
