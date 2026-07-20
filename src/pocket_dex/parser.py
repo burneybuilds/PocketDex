@@ -1,4 +1,4 @@
-from src import poke_api
+from . import poke_api
 
 def parse_basic_info(pokemon_data):
     pokemon_id = pokemon_data["id"]

@@ -1,5 +1,5 @@
-from src.parser import parser_data
-from src.poke_api import get_pokemon_by_name
+from .parser import parser_data
+from .poke_api import get_pokemon_by_name
 
 def get_parse_data(pokemon_name_1, pokemon_name_2):    
     pokemon_one_data = get_pokemon_by_name(pokemon_name_1)

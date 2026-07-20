@@ -1,7 +1,7 @@
-from src.parser import parse_description
-from src.parser import parse_basic_stats
-from src.parser import parse_basic_info
-from src.parser import prase_by_type
+from pocket_dex.parser import parse_description
+from pocket_dex.parser import parse_basic_stats
+from pocket_dex.parser import parse_basic_info
+from pocket_dex.parser import prase_by_type
 import requests as rq
 
 response_url = rq.get("https://pokeapi.co/api/v2/pokemon/pikachu").json()

@@ -1,6 +1,4 @@
-from src.poke_api import api_status
-from src.poke_api import get_pokemon_by_type
-from src.poke_api import get_pokemon_by_name
+from pocket_dex.poke_api import api_status, get_pokemon_by_type, get_pokemon_by_name
 
 def test_api():
     assert api_status() == "🟢 Online"

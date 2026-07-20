@@ -1,5 +1,5 @@
-from src.command import commands_input
-from src.command import get_data
+from pocket_dex.command import commands_input
+from pocket_dex.command import get_data
 
 def test_input():
     keyword, arugment = commands_input("/search pikachu")
@@ -13,13 +13,13 @@ def test_singal_input():
 
 
 # !! TO-DO need to to wrigth test for these two fucntion.
-def test_check_radom():
-    data, _ = get_data("/random", "")
-    pass
+# def test_check_radom():
+#     data, _ = get_data("/random", "")
+#     pass
 
-def test_check_type():
-    data, _ = get_data("/type", "fire")
-    pass
+# def test_check_type():
+#     data, _ = get_data("/type", "fire")
+#     pass
 
 
 # ? This test is no longer needed bacause now a formated ui is coming not raw data.

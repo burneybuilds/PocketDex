@@ -1,10 +1,10 @@
 import random
 
-from src import parser
-from src import poke_api
-from src import display_formatter
-from src.history_handler import handle_input
-from src.compare import get_parse_data
+from . import parser
+from . import poke_api
+from . import display_formatter
+from .history_handler import handle_input
+from .compare import get_parse_data
 
 # Take input from the user and divide the input into two part.
 def commands_input(user_input):

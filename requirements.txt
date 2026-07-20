@@ -2,3 +2,5 @@ requests
 Textualize
 pytest
 rich
+build 
+twine
