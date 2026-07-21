@@ -4,6 +4,9 @@ from rich.panel import Panel
 from rich.table import Table
 from rich.console import Align
 from textwrap import fill
+from rich.progress_bar import ProgressBar
+from rich.text import Text
+
 
 
 # Creates the Rich UI only
@@ -51,6 +54,9 @@ def search_pokemon_display( data):
 
     return Group(top, desc)
 
+ROWS_PER_TABLE = 24
+
+
 def make_table(data, start_index):
     table = Table(
         show_header=True,
@@ -58,20 +64,22 @@ def make_table(data, start_index):
     )
 
     table.add_column("#", style="dim", justify="right", width=4)
-    table.add_column("Pokémon", style="bold green")
+    table.add_column("Pokémon", style="bold green", no_wrap=True)
 
     for i, name in enumerate(data, start=start_index):
         table.add_row(str(i), name.capitalize())
 
     return table
 
+
 def type_pokemon_display(type_data):
-    mid = (len(type_data) + 1) // 2
+    tables = []
 
-    left = make_table(type_data[:mid], 1)
-    right = make_table(type_data[mid:], mid + 1)
+    for start in range(0, len(type_data), ROWS_PER_TABLE):
+        chunk = type_data[start:start + ROWS_PER_TABLE]
+        tables.append(make_table(chunk, start + 1))
 
-    return Columns([left, right], expand=True)
+    return Columns(tables, expand=False)
 
 # * TO-DO: This needes to be done.
 # def error_display(message: str):
@@ -84,3 +92,171 @@ def type_pokemon_display(type_data):
 #         ),
 #         vertical="middle",
 #     )
+
+def stat_bar(value, max_value=255, width=20):
+    filled = int((value / max_value) * width)
+    empty = width - filled
+    return f"[magenta]{'#' * filled}[/][dim]{'-' * empty}[/]"
+
+
+def compare_display(pokemon1, pokemon2, summary):
+    left = Table.grid(padding=(0, 1), expand=False)
+    left.add_column(style="cyan", width=12)
+    left.add_column()
+
+    right = Table.grid(padding=(0, 1), expand=False)
+    right.add_column(style="green", width=12)
+    right.add_column()
+
+    stats = [
+        ("HP", "hp"),
+        ("Attack", "attack"),
+        ("Defense", "defense"),
+        ("Sp. Attack", "special_attack"),
+        ("Sp. Defense", "special_defense"),
+        ("Speed", "pokemon_speed"),
+    ]
+
+    for label, key in stats:
+        left.add_row(
+            label,
+            Text.from_markup(
+                f"{pokemon1[key]:>3}  {stat_bar(pokemon1[key])}"
+            ),
+        )
+
+        right.add_row(
+            label,
+            Text.from_markup(
+                f"{pokemon2[key]:>3}  {stat_bar(pokemon2[key])}"
+            ),
+        )
+
+    summary_panel = Panel(
+        Align.center(
+            Text(summary, style="bold yellow"),
+            vertical="middle",
+        ),
+        title="🏆 Comparison",
+        border_style="yellow",
+        padding=(1, 2),
+    )
+
+    stats_panel = Columns(
+        [
+            Panel(
+                left,
+                title=pokemon1["name"].capitalize(),
+                border_style="cyan",
+            ),
+            Panel(
+                right,
+                title=pokemon2["name"].capitalize(),
+                border_style="green",
+            ),
+        ],
+        equal=True,
+        expand=True,
+    )
+
+    return Group(summary_panel, stats_panel)
+
+def info_display():
+        info = Text.from_markup(
+            """
+    [bold cyan]Hello, Trainer![/bold cyan]
+
+    [bold white]Pocket-Dex[/bold white] was one of my first projects after
+    starting my coding journey. I wanted to build something
+    that worked with real-world API data while helping me
+    practice Python, project structure, and clean code.
+
+    [grey70]────────────────────────────────────────────[/grey70]
+
+    [bold yellow]Developer[/bold yellow]
+    Albert
+
+    [bold green]GitHub[/bold green]
+    https://github.com/burneybuilds
+
+    [bold magenta]Repository[/bold magenta]
+    https://github.com/burneybuilds/PocketDex
+
+    [bold cyan]Email[/bold cyan]
+    tusharburney@gmail.com
+    """
+        )
+        return Align.center(
+            Panel(
+                info,
+                title="[bold red]About Pocket-Dex[/bold red]",
+                border_style="grey50",
+                padding=(2),
+            )
+        )
+
+
+def error_display(message: str):
+            return Align.center(
+                Panel(
+                    Text(
+                        message,
+                        style="bold red",
+                        justify="center",
+                    ),
+                    title="❌ Pocket-Dex Error",
+                    subtitle="Please try again",
+                    border_style="bright_red",
+                    padding=(1, 2),
+                    expand=False,
+                ),
+                vertical="middle",
+            )
+        
+def welcome_display():
+    return Align.center(
+        Panel(
+            Text(
+                "\n🔍 What Pokémon are you looking for today?\n\n"
+                "Type a Pokémon name or ID in the search box.\n\n"
+                "⚡ Gotta Catch 'Em All! ⚡",
+                justify="center",
+                style="bold yellow",
+            ),
+            title="🟡 Pocket-Dex",
+            border_style="yellow",
+            padding=(1, 3),
+            expand=False,
+        ),
+        vertical="middle",
+    )
+
+def api_ok():
+    status = Align.center(
+        Text.from_markup(
+            "[bold green]       ONLINE[/bold green]\n"
+            "[grey70]Connected to PokeAPI[/grey70]"
+        )
+    )
+
+    return Panel.fit(
+        status,
+        title="[bold cyan]API Status[/bold cyan]",
+        border_style="green",
+        padding=(0, 2),
+    )
+
+
+def api_nf():
+    status = Align.center( 
+    Text.from_markup(
+        "[bold red]         OFFLINE[/bold red]\n"
+        "[grey70]Unable to reach PokeAPI[/grey70]"
+    ))
+
+    return Panel.fit(
+        status,
+        title="[bold cyan]API Status[/bold cyan]",
+        border_style="red",
+        padding=(0, 2),
+    )

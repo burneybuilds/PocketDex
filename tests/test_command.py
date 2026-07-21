@@ -2,12 +2,12 @@ from pocket_dex.command import commands_input
 from pocket_dex.command import get_data
 
 def test_input():
-    keyword, arugment = commands_input("/search pikachu")
+    keyword, arugment, _ = commands_input("/search pikachu")
     assert keyword == "/search"
     assert arugment =="pikachu"
 
 def test_singal_input():
-    keyword, arugment = commands_input("/search")
+    keyword, arugment, _ = commands_input("/search")
     assert keyword == "/search"
     assert arugment == None
 
@@ -29,9 +29,9 @@ def test_singal_input():
 #     assert data["id"] == 25
 
 def test_invalid_command():
-    data, _ = get_data("32432", "")
-    assert data == "404"
+    data, _ , _= get_data("32432", "", "")
+    assert data == "invalid Keyword"
 
 def test_data_fail():
-    data, _ = get_data("/search" ,"pika")
-    assert data == "404", None
+    data, _ , _= get_data("/search" ,"pika", None)
+    assert data == "PK not found"

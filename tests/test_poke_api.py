@@ -1,7 +1,7 @@
 from pocket_dex.poke_api import api_status, get_pokemon_by_type, get_pokemon_by_name
 
 def test_api():
-    assert api_status() == "🟢 Online"
+    assert api_status() == "200"
 
 def test_api_type_endpoint():
     #assert get_pokemon_by_type("fire") == True

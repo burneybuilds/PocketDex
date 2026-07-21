@@ -1,15 +1,6 @@
 from .parser import parser_data
 from .poke_api import get_pokemon_by_name
-
-def get_parse_data(pokemon_name_1, pokemon_name_2):    
-    pokemon_one_data = get_pokemon_by_name(pokemon_name_1)
-    pokemon_two_data = get_pokemon_by_name(pokemon_name_2)
-
-    pokemone1 = parser_data(pokemon_one_data)
-    pokemone2 = parser_data(pokemon_two_data)
-
-    return pokemone1, pokemone2 
-
+ 
 def compare(num1 , num2):
     if num1 > num2:
         return 1
@@ -46,10 +37,28 @@ def compare_speed(stats1, stats2):
     speed_2 = stats2["pokemon_speed"]
     return compare(speed_1, speed_2)
 
-def compare_engien():
-    status_1 = parse_basic_stats(data_1)
-    status_2 = parse_basic_stats(data_2)
+def compare_engien(data,  data2):
+    status_1 = parser_data(data)
+    status_2 = parser_data(data2)
 
+    status_1_stats = {
+        "name" : status_1["name"],
+        "hp": status_1["hp"],
+        "attack": status_1["attack"],
+        "defense": status_1["defense"],
+        "special_attack": status_1["special_attack"],
+        "special_defense": status_1["special_defense"],
+        "pokemon_speed": status_1["pokemon_speed"],
+    }
+    status_2_stats = {
+        "name" : status_2["name"],
+        "hp": status_2["hp"],
+        "attack": status_2["attack"],
+        "defense": status_2["defense"],
+        "special_attack": status_2["special_attack"],
+        "special_defense": status_2["special_defense"],
+        "pokemon_speed": status_2["pokemon_speed"],
+    }
     pokemone_1 = []
     pokemone_2 = []
     
@@ -68,8 +77,8 @@ def compare_engien():
             pokemone_2.append(point)
 
     if len(pokemone_1) > len(pokemone_2):
-        return F"{pokemone_name1} Is stronger."
+        return F"{status_1["name"]} Is stronger.", status_1_stats, status_2_stats
     elif len(pokemone_1) < len(pokemone_2):
-        return F"{pokemone_name2} Is stronger."  
+        return F"{status_2["name"]} Is stronger.", status_1_stats, status_2_stats
     else:
-        return "Both Pokemon are same." 
+        return "Both Pokemon are same." , status_1_stats, status_2_stats

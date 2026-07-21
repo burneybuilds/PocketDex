@@ -50,9 +50,9 @@ def get_pokemon_by_type(type):
 def api_status():
     up_time = rq.get("https://pokeapi.co/api/v2/pokemon/")
     if up_time.status_code == 200:
-        return "🟢 Online"
+        return "200"
     else:
-        return "🔴 OFFLINE"
+        return "404"
     
 def check_endpoint(pokemon_name):
     req_data = rq.get("https://pokeapi.co/api/v2/pokemon/" + pokemon_name)

@@ -8,7 +8,7 @@ HISTORY_FILE_PATH = os.path.join(BASE_DIR, "history", "search_history.txt")
 def handle_input(data):
     pokemon_name = data["name"]
     recent_searchs = []
-    with open(HISTORY_FILE_PATH) as r:
+    with open(HISTORY_FILE_PATH, "r") as r:
         searches = r.read()
         
 
@@ -17,9 +17,8 @@ def handle_input(data):
             w.write(f"{pokemon_name}\n")
 
 
-    with open(HISTORY_FILE_PATH) as r:
+    with open(HISTORY_FILE_PATH, "r") as r:
         searches_history = r.read()
         return searches_history
-    
     
     return recent_searchs

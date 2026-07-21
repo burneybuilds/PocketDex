@@ -15,18 +15,14 @@ CLIArt {
 APIStatus {
     width: 100%;
     content-align: center middle;
-
-    border: solid yellow;
     height: auto;
 }
 
-MainDisplay {
-    width: 1fr;
+#main_display {
+    width: 100%;
     height: 1fr;
-    border: solid green;
-    content-align: left top;
+    overflow: auto auto;
 }
-
 PokemonCard {
         width: 100%;
         height: 3fr;
@@ -36,7 +32,6 @@ AuthorNotes {
         width: 100%;
         height: auto;
         content-align: center top;
-         border: solid yellow;
 }
 
 
