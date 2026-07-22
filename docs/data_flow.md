@@ -1,161 +1,208 @@
-# Pocket-Desk Data Flow
+# Pocket-Dex Data Flow
 
-This document explains how data moves through Pocket-Desk, from the moment a user enters a Pokémon name until the information is displayed in the terminal.
+This document explains how data moves through Pocket-Dex, from the moment a user enters a command until the result is displayed in the terminal.
 
-## Overview
+---
 
+# Architecture Overview
 <p align="center">
   <img src="../images/data_flow.png" alt="Pocket-Desk Data Flow" width="600">
 </p>
 
+
+---
+
 # Step 1 — `main.py`
 
-**Responsibility:** Entry point of the application.
+**Responsibility:** Application entry point.
 
-The program starts here. It initializes the application and transfers control to the command handler.
+The application starts here by creating and running the Textual application.
 
-**Input**
-
-* None
-
-**Output**
-
-* Starts the command loop.
+This file contains no application logic.
 
 ---
 
-# Step 2 — `command.py`
+# Step 2 — `cli_display.py`
 
-**Responsibility:** Controls the application's workflow.
+**Responsibility:** User interface and application controller.
 
-This module:
+This module creates the Textual interface and manages the application's event loop.
 
-* Displays the menu
-* Accepts user input
-* Decides which feature to execute
-* Calls the appropriate API and parser functions
+Responsibilities include:
 
-It does **not** know how the API works or how the terminal UI is drawn.
-
----
-
-# Step 3 — `poke_api.py`
-
-**Responsibility:** Communicates with the PokéAPI.
-
-This module sends HTTP requests to the API and retrieves the raw JSON response.
-
-Example:
-
-```text
-User searches:
-Pikachu
-
-↓
-
-GET https://pokeapi.co/api/v2/pokemon/pikachu
-
-↓
-
-Raw JSON Response
-```
-
-No formatting or display happens here.
+- Creating the application layout.
+- Receiving user input.
+- Handling built-in commands (`/help`, `/info`, `/clear`, `/exit`).
+- Calling the command handler.
+- Updating the interface with the returned Rich renderables.
+- Displaying search history and API status.
 
 ---
 
-# Step 4 — `parser.py`
+# Step 3 — `command.py`
 
-**Responsibility:** Converts raw API data into clean Python data.
+**Responsibility:** Command processing.
 
-The PokéAPI returns hundreds of fields.
+This module receives the parsed command and determines which backend functionality should execute.
 
-The parser extracts only the information Pocket-Desk needs, such as:
+Supported commands include:
 
-* Name
-* ID
-* Types
-* Abilities
-* Stats
-* Height
-* Weight
-* Pokédex Description
-* Legendary/Mythical Status
+- `/search`
+- `/random`
+- `/type`
+- `/compare`
 
-It also performs small transformations like:
+For each command it coordinates the backend by:
 
-* Joining multiple types
-* Cleaning flavor text
-* Determining Pokémon status
+- Retrieving data.
+- Updating search history when appropriate.
+- Formatting the final output.
 
-The output is a clean Python dictionary ready for display.
+The module returns Rich renderables to the UI rather than raw data.
 
 ---
 
-# Step 5 — `cli_display.py`
+# Step 4 — `poke_api.py`
 
-**Responsibility:** Displays information in the terminal.
+**Responsibility:** API communication.
 
-This module never communicates with the API.
+This module is the only component that communicates with the PokéAPI.
 
-Instead, it receives already-parsed data and presents it using Rich components such as:
+It retrieves:
 
-* Panels
-* Tables
-* Colors
-* Rules
-* Text formatting
+- Pokémon information
+- Pokémon species information
+- Pokémon by type
+- API availability
 
-Its only job is to make the information easy to read.
+The returned data is raw JSON.
 
 ---
 
-# Complete Data Flow
+# Step 5 — `parser.py`
+
+**Responsibility:** Data extraction.
+
+The parser converts raw API responses into a clean Python dictionary.
+
+It extracts only the fields required by Pocket-Dex, including:
+
+- Name
+- Pokédex ID
+- Types
+- Abilities
+- Base Stats
+- Height
+- Weight
+- Description
+- Status
+- Moves
+
+No user interface code exists in this module.
+
+---
+
+# Step 6 — `history_handler.py`
+
+**Responsibility:** Search history management.
+
+This module maintains the user's search history.
+
+Responsibilities include:
+
+- Loading previous searches.
+- Adding new searches.
+- Removing old entries.
+- Saving the updated history.
+
+---
+
+# Step 7 — `compare.py`
+
+**Responsibility:** Pokémon comparison.
+
+This module compares two Pokémon by evaluating their base statistics.
+
+It determines which Pokémon has the stronger overall stat distribution before returning the result.
+
+---
+
+# Step 8 — `display_formatter.py`
+
+**Responsibility:** Presentation formatting.
+
+This module converts Python dictionaries into Rich renderables.
+
+It creates:
+
+- Pokémon information panels
+- Comparison views
+- Type tables
+- Welcome screen
+- Help screen
+- Error messages
+- History display
+- API status panels
+
+No API requests or application logic occur here.
+
+---
+
+# Complete Search Flow
 
 ```text
 User
  │
- │ Types "pikachu"
+ │ /search pikachu
+ ▼
+cli_display.py
+ │
  ▼
 command.py
  │
- │ Calls API
  ▼
 poke_api.py
  │
- │ Returns raw JSON
+ ▼
+Raw JSON
+ │
  ▼
 parser.py
  │
- │ Extracts useful data
  ▼
-{
-    "name": "Pikachu",
-    "types": "Electric",
-    "hp": 35,
-    ...
-}
+Python Dictionary
+ │
+ ▼
+history_handler.py
+ │
+ ▼
+display_formatter.py
+ │
+ ▼
+Rich Panels / Tables
  │
  ▼
 cli_display.py
  │
- │ Creates Rich panels/tables
  ▼
-Beautiful terminal output
+Updated Terminal Interface
 ```
 
 ---
 
 # Design Philosophy
 
-Each file has a single responsibility:
+Each module has a single responsibility.
 
-| File             | Responsibility                           |
-| ---------------- | ---------------------------------------- |
-| `main.py`        | Starts the application                   |
-| `command.py`     | Handles program flow and user input      |
-| `poke_api.py`    | Retrieves raw data from the PokéAPI      |
-| `parser.py`      | Converts raw JSON into clean Python data |
-| `cli_display.py` | Presents the data in the terminal        |
+| Module | Responsibility |
+|---------|----------------|
+| `main.py` | Starts the application |
+| `cli_display.py` | Manages the Textual interface and event loop |
+| `command.py` | Processes user commands |
+| `poke_api.py` | Retrieves data from the PokéAPI |
+| `parser.py` | Converts raw JSON into structured Python data |
+| `history_handler.py` | Stores and loads search history |
+| `compare.py` | Compares Pokémon statistics |
+| `display_formatter.py` | Converts data into Rich renderables |
 
-By separating these responsibilities, the code remains easier to understand, debug, and maintain as the project grows.
+This separation keeps networking, parsing, formatting, history management, comparison logic, and the user interface independent, making the application easier to maintain, extend, and test.

@@ -1,37 +1,57 @@
-from pocket_dex.command import commands_input
-from pocket_dex.command import get_data
+from rich.console import Group
+from rich.columns import Columns
+
+from pocket_dex.command import commands_input, get_data
+
 
 def test_input():
-    keyword, arugment, _ = commands_input("/search pikachu")
+    keyword, argument, _ = commands_input("/search pikachu")
+
     assert keyword == "/search"
-    assert arugment =="pikachu"
+    assert argument == "pikachu"
 
-def test_singal_input():
-    keyword, arugment, _ = commands_input("/search")
+
+def test_single_input():
+    keyword, argument, _ = commands_input("/search")
+
     assert keyword == "/search"
-    assert arugment == None
+    assert argument is None
 
-
-# # !! TO-DO need to to wrigth test for these two fucntion.
-# def test_check_radom():
-#     data, _, _ = get_data("/random", "")
-#     pass
-
-# def test_check_type():
-#     data, _, _ = get_data("/type", "fire")
-#     pass
-
-
-# ? This test is no longer needed bacause now a formated ui is coming not raw data.
-# def test_data():
-#     data, _ = get_data("/random")
-#     assert data["name"] == "pikachu"
-#     assert data["id"] == 25
 
 def test_invalid_command():
-    data, _ , _= get_data("32432")
+    data, _, _ = get_data("32432", None, None)
+
     assert data == "invalid Keyword"
 
-def test_data_fail():
-    data, _ , _= get_data("/search" ,"pika")
+
+def test_invalid_pokemon():
+    data, _, _ = get_data("/search", "pika", None)
+
     assert data == "PK not found"
+
+
+def test_random():
+    display, history = get_data("/random", None, None)
+
+    assert isinstance(display, Group)
+    assert history is None
+
+
+def test_type():
+    display, history = get_data("/type", "fire", None)
+
+    assert isinstance(display, Columns)
+    assert history is None
+
+
+def test_compare_missing_argument():
+    data, _ = get_data("/compare", "pikachu", None)
+
+    assert data == "Compare_fail"
+
+
+def test_compare():
+    display, history = get_data("/compare", "pikachu", "charizard")
+
+    assert isinstance(display, Group)
+    assert history is None

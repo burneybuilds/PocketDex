@@ -1,12 +1,12 @@
 # Setting Up Pocket-Dex Locally
 
-Follow these steps to run Pocket-Dex on your local machine.
+Follow these steps to run Pocket-Dex from the source code.
 
 ## 1. Clone the Repository
 
 ```bash
-git clone https://github.com/your-username/pocket-dex.git
-cd pocket-dex
+git clone https://github.com/your-username/PocketDex.git
+cd PocketDex
 ```
 
 ## 2. Create a Virtual Environment
@@ -14,58 +14,44 @@ cd pocket-dex
 ### Windows
 
 ```bash
-python -m venv env
-env\Scripts\activate
+python -m venv .venv
+.venv\Scripts\activate
 ```
 
 ### macOS / Linux
 
 ```bash
-python3 -m venv env
-source env/bin/activate
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
-## 3. Install the Required Dependencies
+## 3. Install the Dependencies
 
 ```bash
 pip install -r requirements.txt
 ```
 
-## 4. Run the Application
+## 4. Install Pocket-Dex (Editable Mode)
 
 ```bash
-python main.py
+pip install -e .
 ```
 
-Pocket-Dex should now start in your terminal.
+Installing in editable mode allows changes to the source code to be reflected immediately without reinstalling the package.
 
-## Troubleshooting
-
-### Virtual environment won't activate (Windows)
-
-If PowerShell blocks script execution, run:
-
-```powershell
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
-```
-
-Then activate the environment again:
-
-```powershell
-env\Scripts\Activate.ps1
-```
-
-### Module Not Found
-
-If you receive a `ModuleNotFoundError`, make sure your virtual environment is activated and all dependencies are installed:
+## 5. Run the Application
 
 ```bash
-pip install -r requirements.txt
+pocket-dex
+```
+
+or
+
+```bash
+python -m pocket_dex.main
 ```
 
 ## Requirements
 
-* Python 3.10 or newer
-* Internet connection (Pocket-Dex fetches live data from PokeAPI)
-
-Happy coding! 
+- Python 3.10 or newer
+- Internet connection (Pocket-Dex retrieves live data from the PokéAPI)

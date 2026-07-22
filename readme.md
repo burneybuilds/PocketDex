@@ -1,62 +1,142 @@
 <p align="center">
-    <img src="images/pocket-desk.png" width="800">
+    <img src="images/logo.png" width="200" alt="Pocket-Dex Banner">
 </p>
 
+<h1 align="center">Pocket-Dex</h1>
 
-<h1 align="center">Pocket-Dek<h1>
 <p align="center">
   <img src="https://img.shields.io/badge/Python-3.14-blue" alt="Python">
   <img src="https://img.shields.io/badge/Version-1.0-green" alt="Version">
   <img src="https://img.shields.io/badge/Status-Learning-orange" alt="Status">
   <img src="https://img.shields.io/badge/API-PokeAPI-red" alt="API">
-  <img src="https://img.shields.io/badge/Platform-CLI-black" alt="Platform">
+  <img src="https://img.shields.io/badge/Interface-Terminal_UI-black" alt="Interface">
+  <img src="https://github.com/burneybuilds/PocketDex/actions/workflows/python-tests.yml/badge.svg" alt="Tests">
 </p>
 
-## About the Project
+---
 
-Hey! First of all, thank you for taking the time to check out my project. I wanted this README to answer three simple questions: **Why did I build this? What is this project? And what did I learn from it?**
+# About the Project
 
-### • Why did I build this?
+Thank you for taking the time to check out Pocket-Dex.
 
-When I started learning Python, I didn't want my first project to be another to-do list or weather app. Those are great projects, but I wanted to build something that I could personally connect with. I grew up watching Pokémon and playing the games, so building a Pokédex felt both fun and meaningful. It kept me motivated while teaching me new concepts along the way.
+This project answers three simple questions:
 
-### • What is this project?
+- Why did I build it?
+- What does it do?
+- What did I learn while building it?
 
-PocketDex is currently a command-line application that uses the PokeAPI to fetch live Pokémon data. It retrieves the information, processes only the data that's needed, and presents it in a clean and simple format for the user.
+## Why did I build this?
 
-### • What did I learn?
+When I started learning Python, I didn't want my first project to be another to-do list or weather application. Those are great beginner projects, but I wanted something that would keep me motivated while teaching me real programming concepts.
 
-This project taught me several important Python concepts. I learned how to work with the `requests` library to interact with APIs, how to extract and navigate data from nested dictionaries and lists, and how to handle user input, validate it, and manage errors so the application behaves reliably.
+Having grown up watching Pokémon and playing the games, building a Pokédex felt like the perfect first project.
 
+Along the way, what started as a small CLI slowly evolved into a full terminal application.
 
-## Installation
+---
 
-```bash
-Soon
+## What is Pocket-Dex?
+
+Pocket-Dex is a terminal-based Pokédex built with Python.
+
+It communicates with the **PokeAPI**, retrieves live Pokémon data, processes only the information the application needs, and presents it through a clean Textual interface using Rich components.
+---
+
+## What did I learn?
+
+Pocket-Dex became much more than an API project.
+
+While building it I learned:
+
+- Working with REST APIs using `requests`
+- Parsing nested JSON responses
+- Designing modular applications
+- Separating networking, parsing, formatting, and UI
+- Building terminal user interfaces with **Textual**
+- Creating rich terminal layouts with **Rich**
+- Managing project structure across multiple modules
+- Writing unit tests with `pytest`
+- Packaging Python applications
+- Using Git and GitHub during development
+
+---
+
+# Tech Stack
+
+- Python
+- Textual
+- Rich
+- Requests
+- Pytest
+- PokeAPI
+
+---
+
+# Installation
+
+See the documentation inside:
+
+```
+docs/setup.md
 ```
 
-Run the application:
+---
 
-```bash
-Soon
+# Project Structure
+
+```
+Pocket-Dex/
+│
+├── pocket_dex/
+│   ├── main.py
+│   ├── cli_display.py
+│   ├── command.py
+│   ├── parser.py
+│   ├── poke_api.py
+│   ├── compare.py
+│   ├── display_formatter.py
+│   └── history_handler.py
+│
+├── docs/
+│   ├── DATA_FLOW.md
+│   ├── setup.md
+│   └── build-your-own-cli.md
+│
+├── tests/
+├── images/
+├── requirements.txt
+└── pyproject.toml
 ```
 
-# Projects Over view 
+---
 
-You can explore the code, modify it, or simply follow the flow to understand how everything works.
+# Documentation
 
-If you need help, check the `docs` folder:
+Want to understand how Pocket-Dex works internally?
 
-docs/
-├── build-your-own-cli.md   # How I built the project, libraries used, and lessons learned.
-└── setup.md                # Common setup issues and their fixes.
+Take a look at the documentation inside the `docs/` directory.
 
-## Contributing & Questions
+- **DATA_FLOW.md** — Explains how data moves through the application.
+- **build-your-own-cli.md** — My development journey and lessons learned.
+- **setup.md** — Local setup instructions.
 
-1. If you're a Pokémon fan and would like to contribute, feel free to fork the repository, make your changes, and open a pull request.
+---
 
-2. If you have any questions, suggestions, or feature requests, please open an issue.
+# Contributing
 
-<h3 align="center">Thanks for checking out Pocket-Desk!<h3>
+Contributions are always welcome.
 
-<h5 align="center">Tushar  <h5>
+If you'd like to improve Pocket-Dex:
+
+1. Fork the repository.
+2. Create a new branch.
+3. Make your changes.
+4. Open a Pull Request.
+
+Bug reports, feature requests, and suggestions are also appreciated.
+
+---
+
+<h3 align="center">
+Thanks for checking out Pocket-Dex!
+</h3>
