@@ -7,3 +7,4 @@ feature.txt
 .vscode
 *.egg-info/
 .history
+dist/
