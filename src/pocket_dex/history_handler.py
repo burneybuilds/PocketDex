@@ -18,7 +18,23 @@ def handle_input(data):
 
 
     with open(HISTORY_FILE_PATH, "r") as r:
-        searches_history = r.read()
-        return searches_history
+        # searches_history = r.readline()
+        for search in r:
+            recent_searchs.append(search.replace("\n", ""))
+        
+        if len(recent_searchs) > 5:
+            recent_searchs.pop(0)
+    
+    with open(HISTORY_FILE_PATH, "w") as file:
+        for item in recent_searchs:
+            file.write(item + "\n")
     
     return recent_searchs
+
+def load_history():
+    try:
+        with open(HISTORY_FILE_PATH, "r") as file:
+            return [line.strip() for line in file if line.strip()]
+    except FileNotFoundError:
+        return []
+

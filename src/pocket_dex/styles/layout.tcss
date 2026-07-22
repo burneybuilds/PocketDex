@@ -26,7 +26,6 @@ APIStatus {
 PokemonCard {
         width: 100%;
         height: 3fr;
-        border: solid magenta;
 }
 AuthorNotes {
         width: 100%;

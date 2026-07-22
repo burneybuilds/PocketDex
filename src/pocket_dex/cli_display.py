@@ -1,7 +1,15 @@
 # Modules import`s
 from .poke_api import api_status
 from .command import commands_input, get_data
-from .display_formatter  import info_display, error_display, welcome_display, api_ok, api_nf
+from .display_formatter  import (info_display, 
+                                 error_display, 
+                                 welcome_display, 
+                                 api_ok, 
+                                 api_nf, 
+                                 help_display,
+                                 home_display
+                                )
+from .history_handler import load_history
 
 # Textual Modules Import
 from textual.app import App, ComposeResult
@@ -30,8 +38,12 @@ class layout_fucntion(App):
                 yield APIStatus()
                 yield PokemonCard(id="pokemon_card")
                 yield AuthorNotes()
+    
     def on_mount(self):
         self.query_one("#main_display").update(welcome_display())
+        
+        history = home_display(load_history())   # <-- CHANGED: load history on startup
+        self.query_one("#pokemon_card", PokemonCard).show_message(history)  # <-- CHANGED
 
     # Handles user input
     def on_input_submitted(self, event: Input.Submitted):
@@ -57,7 +69,12 @@ class layout_fucntion(App):
             self.query_one("#main_display").update(info_display()) 
             event.input.value = ""
             return
-
+        
+        if user_input == "/help":
+            self.query_one("#main_display").update(help_display()) 
+            event.input.value = ""
+            return
+            
         keyword, argument, argument2 = commands_input(user_input)
 
         #if the keyword is not clear or exit continue with this program.
@@ -84,8 +101,13 @@ class layout_fucntion(App):
             # Create the Rich display
             # display = self.pokemon_display(pokemon_data)
             # Update the main display
-            self.query_one("#main_display").update(pokemon_data)
-        
+            if history == None:
+                self.query_one("#main_display").update(pokemon_data)
+            else:
+                self.query_one("#main_display").update(pokemon_data)
+
+                self.query_one("#pokemon_card", PokemonCard).show_message(history)
+                    
         event.input.value = ""
 
 
@@ -136,46 +158,8 @@ class APIStatus(Static):
             self.update(api_nf())
         
 class PokemonCard(Static):
-    def on_mount(self):
-        self.update(
-            Panel(
-                "Search a Pokémon...",
-                title="Pokémon Card"
-            )
-        )
-
-
-
-    def show_card(self, data, rarity="Common"):
-
-        card = Table.grid(padding=1)
-        card.add_column(justify="center")
-
-        card.add_row(f"[bold yellow]{data['name'].upper()}[/]")
-        card.add_row("")
-        card.add_row(f"[cyan]Type:[/] {(data['types'])}")
-        card.add_row("")
-        card.add_row(f"[bold green]★ {rarity}[/]")
-
-        self.update(
-            Panel(
-                Align.center(card),
-                title="Pokémon Card",
-                border_style=self.get_border(rarity),
-            )
-        )
-
-    def get_border(self, rarity):
-
-        borders = {
-            "Common": "white",
-            "Rare": "blue",
-            "Epic": "magenta",
-            "Legendary": "red",
-            "Gold": "yellow",
-        }
-
-        return borders.get(rarity, "white")
+    def show_message(self, display):  
+        self.update(display) 
 
 class AuthorNotes(Static):
     def on_mount(self):

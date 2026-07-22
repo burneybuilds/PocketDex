@@ -12,13 +12,13 @@ def test_singal_input():
     assert arugment == None
 
 
-# !! TO-DO need to to wrigth test for these two fucntion.
+# # !! TO-DO need to to wrigth test for these two fucntion.
 # def test_check_radom():
-#     data, _ = get_data("/random", "")
+#     data, _, _ = get_data("/random", "")
 #     pass
 
 # def test_check_type():
-#     data, _ = get_data("/type", "fire")
+#     data, _, _ = get_data("/type", "fire")
 #     pass
 
 
@@ -29,9 +29,9 @@ def test_singal_input():
 #     assert data["id"] == 25
 
 def test_invalid_command():
-    data, _ , _= get_data("32432", "", "")
+    data, _ , _= get_data("32432")
     assert data == "invalid Keyword"
 
 def test_data_fail():
-    data, _ , _= get_data("/search" ,"pika", None)
+    data, _ , _= get_data("/search" ,"pika")
     assert data == "PK not found"

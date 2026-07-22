@@ -260,3 +260,71 @@ def api_nf():
         border_style="red",
         padding=(0, 2),
     )
+
+def help_display():
+    return Align.center(
+        Panel(
+            Text(
+                "\n Pocket-Dex Commands\n\n"
+                " /search <name|id>   Search a Pokémon by name or ID\n"
+                " /random             Get a random Pokémon\n"
+                " /type <type>        List Pokémon of a specific type\n"
+                " /history            View recent searches\n"
+                " /help               Show this help menu\n"
+                " /exit               Exit Pocket-Dex\n\n"
+                " Examples:\n"
+                "   /search pikachu\n"
+                "   /search 25\n"
+                "   /type fire\n"
+                "   /random\n\n"
+                "⚡ Happy Hunting! ⚡",
+                justify="left",
+                style="bold cyan",
+            ),
+            title="Pocket-Dex Help",
+            border_style="cyan",
+            padding=(1, 3),
+            expand=False,
+        ),
+        vertical="middle",
+    )
+
+
+def home_display(history: list[str]):
+    welcome = Text(
+        "\n"
+        "⚡ Welcome to Pocket-Dex ⚡\n\n"
+        "Your terminal companion.\n\n",
+        justify="center",
+        style="bold yellow",
+    )
+
+    history_text = Text(style="bold white")
+
+    history_text.append("📜 Recent Searches\n\n", style="bold cyan")
+
+    if not history:
+        history_text.append(
+            "No recent searches yet.\n"
+            "Search for a Pokémon to get started!",
+            style="dim",
+        )
+    else:
+        for index, search in enumerate(reversed(history[-10:]), start=1):
+            history_text.append(f"{index}. {search}\n")
+
+    content = Group(
+        welcome,
+        history_text,
+    )
+
+    return Align.center(
+        Panel(
+            content,
+            title="🟡 Pocket-Dex Home",
+            border_style="yellow",
+            padding=(1, 3),
+            expand=False,
+        ),
+        vertical="middle",
+    )

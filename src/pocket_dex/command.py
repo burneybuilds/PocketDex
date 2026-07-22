@@ -31,7 +31,8 @@ def get_data(keyword ,argument, argument2):
         data = parser.parser_data(argument)
         recent_searchs = handle_input(data)
         display = display_formatter.search_pokemon_display(data)
-        return display, recent_searchs
+        display_history = display_formatter.home_display(recent_searchs)
+        return display, display_history
     
     elif keyword == "/random":
         
@@ -39,24 +40,22 @@ def get_data(keyword ,argument, argument2):
         data = parser.parser_data(str(pokemon_id))
         recent_searchs = handle_input(data)
         display = display_formatter.search_pokemon_display(data)
-        return display, recent_searchs
+        return display, None
     
     elif keyword == "/type":
+        
         data = parser.prase_by_type(argument)
         display = display_formatter.type_pokemon_display(data)
         return display, None
     
     elif keyword == "/compare":
+        
         if argument == None or argument2 == None:
             return "Compare_fail" , None
         compare_result, status_1_stats, status_2_stats = compare_engien(argument , argument2)
         display = display_formatter.compare_display(status_1_stats, status_2_stats, compare_result)
         return display, None
-    
-    elif keyword == "/help":
-        info = help()
-        for i in info:
-            print(i)
+
 
     else:
         return "404", None
