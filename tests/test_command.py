@@ -19,13 +19,13 @@ def test_single_input():
 
 
 def test_invalid_command():
-    data, _, _ = get_data("32432", None, None)
+    data, _ = get_data("32432", None, None)
 
     assert data == "invalid Keyword"
 
 
 def test_invalid_pokemon():
-    data, _, _ = get_data("/search", "pika", None)
+    data, _ = get_data("/search", "pika", None)
 
     assert data == "PK not found"
 
