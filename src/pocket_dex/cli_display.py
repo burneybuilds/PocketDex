@@ -61,7 +61,7 @@ class layout_fucntion(App):
             return
 
         if user_input == "/clear":
-            self.query_one("#main_display").update(self.welcome_display())
+            self.query_one("#main_display").update(welcome_display())
             event.input.value = ""
             return 
     

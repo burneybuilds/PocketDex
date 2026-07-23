@@ -21,12 +21,12 @@ def get_data(keyword ,argument, argument2):
     keyword_list = ["/search", "/random", "/type" , "/compare", "/help"]
 
     if keyword not in keyword_list:
-        return "invalid Keyword", None, None
+        return "invalid Keyword", None
     
     if keyword == "/search":
         
         if poke_api.check_endpoint(argument) == False:
-            return "PK not found", None, None
+            return "PK not found", None
         
         data = parser.parser_data(argument)
         recent_searchs = handle_input(data)

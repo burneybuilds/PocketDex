@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "pocket-dex"
-version = "1.0.3"
+version = "1.0.4"
 description = "A terminal-based Pokédex built with Python, Textual, and Rich."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -27,5 +27,5 @@ where = ["src"]
 [tool.setuptools.package-data]
 pocket_dex = [
     "styles/**/*",
-    "history.txt",
+    "history/*"
 ]
